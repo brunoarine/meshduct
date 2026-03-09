@@ -84,6 +84,7 @@ class Config:
     local: LocalConfig = field(default_factory=LocalConfig)
     encryption: EncryptionConfig = field(default_factory=EncryptionConfig)
     encrypted_fallback: str = "forward"  # "forward" or "drop"
+    stats_interval: int = 60  # Seconds between stats log output
     relay: dict[str, Any] = field(default_factory=lambda: {"targets": []})
     targets: list[RelayTargetConfig] = field(default_factory=list)
 
@@ -160,6 +161,7 @@ def load_config(config_path: str | Path) -> Config:
         local=_parse_local(data),
         encryption=_parse_encryption(data),
         encrypted_fallback=data.get("encrypted_fallback", "forward"),
+        stats_interval=data.get("stats_interval", 60),
         relay=data.get("relay", {"targets": []}),
     )
     
@@ -180,6 +182,12 @@ def load_config(config_path: str | Path) -> Config:
 
 def _validate_config(config: Config) -> None:
     """Validate configuration values."""
+    # Validate stats_interval
+    if config.stats_interval < 1:
+        raise ValueError(
+            f"stats_interval must be at least 1 second, got: {config.stats_interval}"
+        )
+
     # Validate encrypted_fallback
     if config.encrypted_fallback not in ("forward", "drop"):
         raise ValueError(

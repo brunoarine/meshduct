@@ -25,6 +25,10 @@ encryption:
 # (no matching PSK). Options: "forward" or "drop"
 encrypted_fallback: "drop"
 
+# ─── Stats Logging ───────────────────────────────────────────────
+# Interval in seconds between statistics log output
+stats_interval: 60
+
 # ─── Relay Targets ──────────────────────────────────────────────
 # One or more upstream MQTT servers to forward packets to.
 relay:

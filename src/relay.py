@@ -381,7 +381,7 @@ class RelayEngine:
     def _stats_logger(self) -> None:
         """Periodically log statistics."""
         while self.running:
-            self._stop_event.wait(60)  # Log every 60 seconds
+            self._stop_event.wait(self.config.stats_interval)
             if not self.running:
                 break
             
