@@ -1,0 +1,77 @@
+# ─── Local Broker Connection ─────────────────────────────────────
+local:
+  host: "mqtt.meshsorocaba.org"          # Docker service name or IP
+  port: 1883
+  username: "meshdev"
+  password: "large4cats"
+  client_id: "meshduct-relay"
+  # Topics to subscribe to on the local broker.
+  # This determines what packets the relay sees.
+  subscribe:
+    - "msh/BR/meshsorocaba/#"
+
+# ─── Encryption Keys (for inspecting encrypted packets) ──────────
+# Without these, encrypted packets are forwarded unfiltered.
+# Keys are base64-encoded.
+encryption:
+  # The well-known default Meshtastic key (used by LongFast etc.)
+  default_key: "1PG7OiApB1nwvP+rz05pAQ=="
+  # Optional per-channel overrides
+  channel_keys: {}
+    # MyPrivateChannel: "<base64 key>"
+
+# ─── Encrypted Packet Policy ────────────────────────────────────
+# What to do when a packet is encrypted and cannot be decrypted
+# (no matching PSK). Options: "forward" or "drop"
+encrypted_fallback: "drop"
+
+# ─── Relay Targets ──────────────────────────────────────────────
+# One or more upstream MQTT servers to forward packets to.
+relay:
+  targets:
+    - name: "meshtastic.org"
+      enabled: true
+      host: "mqtt.meshtastic.org"
+      port: 1883
+      username: "meshdev"
+      password: "large4cats"
+      client_id: "meshsorocaba-bridge"
+      qos: 1
+
+      # Direction: "out" (local→remote), "in" (remote→local), "both"
+      direction: "out"
+
+      # Topic remapping: strip local_prefix, prepend remote_prefix.
+      # Example:
+      #   local:  msh/BR/meshsorocaba/2/e/LongFast/!aabb
+      #   remote: meshdev/2/e/LongFast/!aabb
+      topic_map:
+        local_prefix: "msh/BR/meshsorocaba/"
+        remote_prefix: "msh/BR/"
+
+      # ── Packet Filter ──────────────────────────────────────
+      # Filter packets by Meshtastic portnum before relaying.
+      # Mode: "allowlist" or "blocklist"
+      #
+      # Common portnums (from meshtastic.portnums_pb2):
+      #   TEXT_MESSAGE_APP        = 1
+      #   POSITION_APP            = 3
+      #   NODEINFO_APP            = 4
+      #   ROUTING_APP             = 5
+      #   ADMIN_APP               = 6
+      #   TELEMETRY_APP           = 67
+      #   TRACEROUTE_APP          = 70
+      #   NEIGHBORINFO_APP        = 71
+      #   MAP_REPORT_APP          = 73
+      filter:
+        mode: "blocklist"
+        portnums:
+          - TEXT_MESSAGE_APP
+
+      # ── Topic Bypass ───────────────────────────────────────
+      # Topic patterns that skip portnum filtering entirely and
+      # are always forwarded. Map reports and stats don't contain
+      # ServiceEnvelope protobufs and carry no private content.
+      bypass_topics:
+        - "msh/+/+/map/#"
+        - "msh/+/+/stat/#"
