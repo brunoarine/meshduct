@@ -1,6 +1,6 @@
 # ─── Local Broker Connection ─────────────────────────────────────
 local:
-  host: "mqtt.meshsorocaba.org"          # Docker service name or IP
+  host: "mqtt.yourlocalmesh.org"          # Docker service name or IP
   port: 1883
   username: "meshdev"
   password: "large4cats"
@@ -8,7 +8,7 @@ local:
   # Topics to subscribe to on the local broker.
   # This determines what packets the relay sees.
   subscribe:
-    - "msh/BR/meshsorocaba/#"
+    - "msh/BR/yourlocalmesh/#"
 
 # ─── Encryption Keys (for inspecting encrypted packets) ──────────
 # Without these, encrypted packets are forwarded unfiltered.
@@ -39,7 +39,7 @@ relay:
       port: 1883
       username: "meshdev"
       password: "large4cats"
-      client_id: "meshsorocaba-bridge"
+      client_id: "yourlocalmesh-bridge"
       qos: 1
 
       # Direction: "out" (local→remote), "in" (remote→local), "both"
@@ -47,10 +47,10 @@ relay:
 
       # Topic remapping: strip local_prefix, prepend remote_prefix.
       # Example:
-      #   local:  msh/BR/meshsorocaba/2/e/LongFast/!aabb
+      #   local:  msh/BR/yourlocalmesh/2/e/LongFast/!aabb
       #   remote: meshdev/2/e/LongFast/!aabb
       topic_map:
-        local_prefix: "msh/BR/meshsorocaba/"
+        local_prefix: "msh/BR/yourlocalmesh/"
         remote_prefix: "msh/BR/"
 
       # ── Packet Filter ──────────────────────────────────────

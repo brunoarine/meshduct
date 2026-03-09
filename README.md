@@ -23,7 +23,7 @@ local:
   username: "meshdev"
   password: "yourpassword"
   subscribe:
-    - "msh/BR/meshsorocaba/#"
+    - "msh/BR/yourlocalmesh/#"
 
 relay:
   targets:
@@ -34,7 +34,7 @@ relay:
       username: "meshdev"
       password: "yourpassword"
       topic_map:
-        local_prefix: "msh/BR/meshsorocaba/"
+        local_prefix: "msh/BR/yourlocalmesh/"
         remote_prefix: "msh/BR/"
       filter:
         mode: "blocklist"
